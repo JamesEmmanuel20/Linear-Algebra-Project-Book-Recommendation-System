@@ -178,8 +178,11 @@ function renderResults(data) {
     const infoSimilarUser =
         document.getElementById("infoSimilarUser");
 
-    const infoBookCount =
-        document.getElementById("infoBookCount");
+    const resultBookCount =
+    document.getElementById("resultBookCount");
+    
+    const infoBookCountSidebar =
+    document.getElementById("infoBookCountSidebar");
 
     const description =
         document.getElementById("matchDescription");
@@ -274,14 +277,18 @@ function renderResults(data) {
     }
 
 
-    if (infoBookCount) {
+    const recommendationCount =
+    data.recommendations
+        ? data.recommendations.length
+        : 0;
 
-        infoBookCount.textContent =
-            data.recommendations
-                ? data.recommendations.length
-                : 0;
+if (resultBookCount) {
+    resultBookCount.textContent = recommendationCount;
+}
 
-    }
+if (infoBookCountSidebar) {
+    infoBookCountSidebar.textContent = recommendationCount;
+}
 
 
     /* -----------------------------------------
