@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>BookWise — Personalized Book Recommendations</title>
+
+    <meta
+        name="description"
+        content="BookWise uses linear algebra and reader similarity to recommend books personalized to your reading preferences."
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/css/style.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================== -->
+
+    <nav class="navbar">
+
+        <a
+            href="#home"
+            class="brand"
+        >
+
+            <div class="brand-icon">
+                <span>📖</span>
+            </div>
+
+            <div>
+
+                <span class="brand-name">
+                    BookWise
+                </span>
+
+                <span class="brand-tagline">
+                    Read smarter
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a
+                href="#home"
+                class="nav-link active"
+            >
+                Home
+            </a>
+
+            <a
+                href="#finder"
+                class="nav-link"
+            >
+                Recommendations
+            </a>
+
+            <a
+                href="#how-it-works"
+                class="nav-link"
+            >
+                How it works
+            </a>
+
+            <a
+                href="#insights"
+                class="nav-link"
+            >
+                Insights
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================================
+         HERO
+    ========================================== -->
+
+    <main id="home">
+
+        <section class="hero-section">
+
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    <span>✦</span>
+                    PERSONALIZED READING
+                </div>
+
+
+                <h1>
+                    Discover books
+                    <span>chosen for you.</span>
+                </h1>
+
+
+                <p class="hero-description">
+                    BookWise compares reading preferences to find
+                    your closest reader match and recommends books
+                    they loved that you may enjoy too.
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a
+                        href="#finder"
+                        class="primary-button"
+                    >
+                        Find my books
+                        <span>→</span>
+                    </a>
+
+
+                    <a
+                        href="#how-it-works"
+                        class="text-button"
+                    >
+                        See how it works
+                    </a>
+
+                </div>
+
+
+                <div class="hero-stats">
+
+                    <div class="hero-stat">
+
+                        <strong id="readerCount">
+                            —
+                        </strong>
+
+                        <span>
+                            Readers
+                        </span>
+
+                    </div>
+
+
+                    <div class="hero-stat-divider"></div>
+
+
+                    <div class="hero-stat">
+
+                        <strong>
+                            —
+                        </strong>
+
+                        <span>
+                            Books
+                        </span>
+
+                    </div>
+
+
+                    <div class="hero-stat-divider"></div>
+
+
+                    <div class="hero-stat">
+
+                        <strong>
+                            2
+                        </strong>
+
+                        <span>
+                            Methods
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-visual">
+
+                <div class="hero-card main-book-card">
+
+                    <div class="floating-label">
+                        ✨ Recommended
+                    </div>
+
+
+                    <div class="hero-book-cover">
+
+                        <span>
+                            Your next
+                            great read
+                        </span>
+
+                    </div>
+
+
+                    <div class="hero-book-info">
+
+                        <span class="small-label">
+                            BOOKWISE PICK
+                        </span>
+
+                        <h3>
+                            Find something
+                            you'll love.
+                        </h3>
+
+                        <div class="hero-rating">
+                            ★
+                            <strong>Personalized</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="floating-card floating-card-one">
+
+                    <span class="floating-icon">
+                        🎯
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Smart matching
+                        </strong>
+
+                        <span>
+                            Powered by vectors
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="floating-card floating-card-two">
+
+                    <span class="floating-icon">
+                        ★
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Reader approved
+                        </strong>
+
+                        <span>
+                            Based on real ratings
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             FINDER
+        ========================================== -->
+
+        <section
+            id="finder"
+            class="section finder-section"
+        >
+
+            <div class="section-heading centered">
+
+                <div class="eyebrow">
+                    START DISCOVERING
+                </div>
+
+                <h2>
+                    Find books that match
+                    your taste.
+                </h2>
+
+                <p>
+                    Choose a reader profile and let BookWise
+                    find someone with similar reading preferences.
+                </p>
+
+            </div>
+
+
+            <div class="finder-card">
+
+                <div class="finder-step">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+
+                    <div class="finder-field">
+
+                        <label for="userSelect">
+                            Choose your reader profile
+                        </label>
+
+                        <select id="userSelect">
+                            <option>
+                                Loading readers...
+                            </option>
+                        </select>
+
+                        <small>
+                            Your profile represents your
+                            ratings across the books in our dataset.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="finder-step">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+
+                    <div class="finder-field">
+
+                        <label for="metricSelect">
+                            Recommendation method
+                        </label>
+
+                        <select id="metricSelect">
+
+                            <option value="euclidean">
+                                Best Match — Euclidean Distance
+                            </option>
+
+                            <option value="cosine">
+                                Preference Similarity — Cosine Similarity
+                            </option>
+
+                        </select>
+
+                        <small>
+                            Choose the mathematical method used
+                            to compare reading preferences.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="finder-note">
+
+                    <span>
+                        ∑
+                    </span>
+
+                    <p>
+
+                        <strong>
+                            How it works:
+                        </strong>
+
+                        your ratings are represented as vectors.
+                        BookWise compares them with other readers
+                        and recommends books highly rated by your
+                        closest match.
+
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="recommendButton"
+                    class="primary-button finder-button"
+                    onclick="getRecommendations()"
+                >
+
+                    <span>
+                        ✨
+                    </span>
+
+                    Find My Recommendations
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             RESULTS
+        ========================================== -->
+
+        <section
+            id="resultsSection"
+            class="section results-section hidden"
+        >
+
+            <div class="results-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        YOUR RESULTS
+                    </div>
+
+                    <h2>
+                        Books you might love
+                    </h2>
+
+                    <p>
+                        BookWise found a reader with preferences
+                        similar to yours and used their highly-rated
+                        books to create your recommendations.
+                    </p>
+
+                </div>
+
+
+                <div class="results-icon">
+                    ✨
+                </div>
+
+            </div>
+
+
+
+            <!-- Similarity statistics -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <span
+                        class="stat-label"
+                        id="similarityLabel"
+                    >
+                        EUCLIDEAN DISTANCE
+                    </span>
+
+                    <strong id="similarityScore">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        CLOSEST MATCH
+                    </span>
+
+                    <strong id="similarUser">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        BOOKS FOUND
+                    </span>
+
+                    <strong class="stat-value" id="resultBookCount">—</strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Match explanation -->
+
+            <div class="match-explanation">
+
+                <div class="match-icon">
+                    ∑
+                </div>
+
+
+                <div>
+
+                    <strong id="matchTitle">
+                        Your reading match
+                    </strong>
+
+                    <p id="matchDescription">
+                        BookWise is comparing your
+                        reading preferences.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Recommended books -->
+
+            <div class="recommendations-layout">
+
+
+                <div class="recommendations-container">
+
+                    <div class="recommendations-heading">
+
+                        <div>
+
+                            <div class="eyebrow">
+                                YOUR BOOK PICKS
+                            </div>
+
+                            <h3>
+                                Recommended for you
+                            </h3>
+
+                            <p>
+                                Books highly rated by your
+                                closest reading match.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="recommendationsList"
+                        class="book-grid"
+                    >
+                    </div>
+
+                </div>
+
+
+
+                <!-- Why these books -->
+
+                <aside class="recommendation-info">
+
+                    <div class="info-icon">
+                        ✨
+                    </div>
+
+
+                    <div class="eyebrow">
+                        WHY THESE BOOKS?
+                    </div>
+
+
+                    <h3>
+                        Your recommendations
+                        are personalized.
+                    </h3>
+
+
+                    <p>
+                        BookWise compares your reading
+                        preferences with other readers and
+                        finds the closest match. Books that
+                        reader rated highly can then become
+                        recommendations for you.
+                    </p>
+
+
+                    <div class="info-divider"></div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Reader match
+                        </span>
+
+                        <strong id="infoSimilarUser">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Books found
+                        </span>
+
+                        <strong id="infoBookCountSidebar">
+                            —
+                        </strong>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+
+
+            <!-- Results actions -->
+
+            <div class="result-actions">
+
+                <button
+                    class="secondary-button"
+                    onclick="backToFinder()"
+                >
+                    ← Choose another reader
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             HOW IT WORKS
+        ========================================== -->
+
+        <section
+            id="how-it-works"
+            class="section how-section"
+        >
+
+            <div class="section-heading centered">
+
+                <div class="eyebrow">
+                    THE TECHNOLOGY
+                </div>
+
+                <h2>
+                    How BookWise works
+                </h2>
+
+                <p>
+                    Behind the simple experience is a
+                    linear algebra recommendation system.
+                </p>
+
+            </div>
+
+
+            <div class="process-grid">
+
+
+                <div class="process-card">
+
+                    <div class="process-number">
+                        01
+                    </div>
+
+                    <div class="process-icon">
+                        ▦
+                    </div>
+
+                    <h3>
+                        Build the matrix
+                    </h3>
+
+                    <p>
+                        Reader ratings are represented as
+                        rows in a user-item matrix. Each
+                        column represents a book.
+                    </p>
+
+                    <div class="formula">
+                        R ∈ ℝ<sup>m × n</sup>
+                    </div>
+
+                </div>
+
+
+
+                <div class="process-arrow">
+                    →
+                </div>
+
+
+
+                <div class="process-card">
+
+                    <div class="process-number">
+                        02
+                    </div>
+
+                    <div class="process-icon">
+                        ↔
+                    </div>
+
+                    <h3>
+                        Find similar readers
+                    </h3>
+
+                    <p>
+                        BookWise compares reader vectors
+                        using Euclidean distance or
+                        cosine similarity.
+                    </p>
+
+                    <div class="formula">
+                        d(u,v) = ||u − v||₂
+                    </div>
+
+                </div>
+
+
+
+                <div class="process-arrow">
+                    →
+                </div>
+
+
+
+                <div class="process-card">
+
+                    <div class="process-number">
+                        03
+                    </div>
+
+                    <div class="process-icon">
+                        ★
+                    </div>
+
+                    <h3>
+                        Recommend books
+                    </h3>
+
+                    <p>
+                        Books highly rated by the closest
+                        reader become potential recommendations.
+                    </p>
+
+                    <div class="formula">
+                        Similar reader → New picks
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="math-explanation">
+
+                <div class="math-symbol">
+                    ∑
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Why linear algebra?
+                    </h3>
+
+                    <p>
+                        A reader's ratings can be treated as
+                        a vector. By measuring the distance or
+                        similarity between vectors, BookWise
+                        can identify readers with similar tastes
+                        and use their preferences to generate
+                        recommendations.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             INSIGHTS
+        ========================================== -->
+
+        <section
+            id="insights"
+            class="section insights-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        DATA INSIGHTS
+                    </div>
+
+                    <h2>
+                        What readers are rating highly
+                    </h2>
+
+                    <p>
+                        Average book ratings across all readers
+                        in the dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="insights-badge">
+                    DATASET ANALYSIS
+                </div>
+
+            </div>
+
+
+            <div class="insight-stats">
+
+                <div class="insight-stat">
+
+                    <span>
+                        BOOKS
+                    </span>
+
+                    <strong id="bookCount">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="insight-stat">
+
+                    <span>
+                        AVERAGE RATING
+                    </span>
+
+                    <strong>
+                        <span id="averageRating">
+                            —
+                        </span>
+                        /5
+                    </strong>
+
+                </div>
+
+
+                <div class="insight-stat">
+
+                    <span>
+                        TOP RATED
+                    </span>
+
+                    <strong
+                        id="topBook"
+                        class="top-book-name"
+                    >
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-card">
+
+                <div class="chart-header">
+
+                    <div>
+
+                        <h3>
+                            Average rating by book
+                        </h3>
+
+                        <p>
+                            Mean rating calculated across
+                            all reader vectors.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="averageChart"
+                    ></canvas>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-brand">
+
+            <div class="brand-icon">
+                <span>📖</span>
+            </div>
+
+            <div>
+
+                <strong>
+                    BookWise
+                </strong>
+
+                <span>
+                    Read smarter.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <p>
+            Personalized recommendations powered by
+            linear algebra, Euclidean distance,
+            and vector similarity.
+        </p>
+
+
+        <span class="footer-project">
+            Linear Algebra Project
+        </span>
+
+    </footer>
+
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script src="/static/js/main.js"></script>
+
+</body>
+
+</html>
