@@ -354,87 +354,73 @@ function renderResults(data) {
    CREATE BOOK CARD
 ========================================= */
 
-function createBookCard(
-    item,
-    similarUser,
-    index
-) {
 
-    const card =
-        document.createElement("div");
+function createBookCard(item, similarUser, index) {
 
+    const card = document.createElement("div");
     card.className = "book-card";
-
 
     /* -----------------------------------------
        BOOK TITLE
     ----------------------------------------- */
 
-    const title =
-        item.book
-            .replace(/_/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
-
+    const title = item.book
+        .replace(/_/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
 
     /* -----------------------------------------
-       RATING
+       RATINGS
     ----------------------------------------- */
 
-    const rating =
-        Number(item.similar_user_rating)
-            .toFixed(1);
+    const similarRating =
+        Number(item.similar_user_rating).toFixed(1);
 
+    const targetRating =
+        Number(item.target_user_rating).toFixed(1);
+
+    const difference =
+        item.rating_difference !== undefined
+            ? Number(item.rating_difference).toFixed(1)
+            : (
+                Number(item.similar_user_rating) -
+                Number(item.target_user_rating)
+            ).toFixed(1);
 
     /* -----------------------------------------
        BOOK COVER STYLES
     ----------------------------------------- */
 
     const coverStyles = [
-
         "linear-gradient(145deg, #6657f5, #9a8cff)",
-
         "linear-gradient(145deg, #3f8cff, #78b8ff)",
-
         "linear-gradient(145deg, #e36b8a, #f0a2b4)",
-
         "linear-gradient(145deg, #4a9c83, #78c9ad)",
-
         "linear-gradient(145deg, #e99b43, #f4c37e)"
-
     ];
 
-
     const coverStyle =
-        coverStyles[
-            index % coverStyles.length
-        ];
-
+        coverStyles[index % coverStyles.length];
 
     /* -----------------------------------------
-       BOOK CARD HTML
+       BOOK CARD
     ----------------------------------------- */
 
     card.innerHTML = `
-
         <div
             class="book-cover"
             style="background: ${coverStyle}"
         >
-
             <div class="cover-title">
                 ${escapeHTML(title)}
             </div>
-
         </div>
-
 
         <div class="book-info">
 
             <h4>
                 ${escapeHTML(title)}
             </h4>
-
 
             <div class="book-rating">
 
@@ -443,52 +429,49 @@ function createBookCard(
                 </span>
 
                 <span class="rating-number">
-                    ${rating}/5
+                    ${similarRating}/5
                 </span>
 
                 <span>
-                    Highly rated by your closest match
+                    Similar reader's rating
                 </span>
 
             </div>
 
-
             <div class="book-source">
-                Reader ${escapeHTML(similarUser)}
+                You rated this ${targetRating}/5
             </div>
 
+            <div class="book-source">
+                Your closest match rated it
+                ${difference} point${difference == 1 ? "" : "s"} higher.
+            </div>
 
             <span class="recommended-badge">
                 Recommended for you
             </span>
 
         </div>
-
     `;
 
-
     return card;
-
 }
 
 
 /* =========================================
    ESCAPE HTML
-   Prevents unexpected HTML from book/user names
 ========================================= */
 
 function escapeHTML(value) {
-
     return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
-
+        
 /* =========================================
    BACK TO FINDER
 ========================================= */
