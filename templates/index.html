@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommender | Linear Algebra</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Linear Algebra Book Recommender</h1>
+            <p>Matrix Similarity & Vector Distance Metrics ($40 \times 15$ Rating Space)</p>
+        </header>
+
+        <!-- User Selection Controls -->
+        <section class="card">
+            <h2>1. Select Target User Vector ($\vec{u} \in \mathbb{R}^{15}$)</h2>
+            <div class="controls">
+                <div class="input-group">
+                    <label for="userSelect">Select User:</label>
+                    <select id="userSelect"></select>
+                </div>
+                <div class="input-group">
+                    <label for="metricSelect">Select Distance Metric:</label>
+                    <select id="metricSelect">
+                        <option value="euclidean">Euclidean Distance (L2 Norm)</option>
+                        <option value="cosine">Cosine Similarity (Angle Theta)</option>
+                    </select>
+                </div>
+                <button onclick="getRecommendations()">Compute Nearest Neighbor</button>
+            </div>
+        </section>
+
+        <!-- Recommendations Display Card -->
+        <section id="resultsCard" class="card hidden">
+            <h2>2. Vector Comparison Results</h2>
+            <div id="similarityInfo" class="metrics-box"></div>
+            <h3>Recommended Books:</h3>
+            <ul id="recommendationsList" class="rec-list"></ul>
+        </section>
+
+        <!-- Analytics Chart -->
+        <section class="card">
+            <h2>3. Item Space Analysis (Column Mean Vector)</h2>
+            <p class="chart-desc">Average rating score per book calculated across all 40 user vectors.</p>
+
+            <div class="chart-container">
+                <canvas id="averageChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

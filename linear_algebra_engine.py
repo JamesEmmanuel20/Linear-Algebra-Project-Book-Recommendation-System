@@ -7,7 +7,7 @@ class BookRecommenderEngine:
     Linear Algebra Engine for User-Item Matrix Recommendation.
     
     Mathematical Model:
-    - Matrix R in R^(m x n) where m = number of users, n = number of items (books).
+    - Matrix R in R^(m x n) where m = number of users, n = number of books.
     - Each row vector u_i in R^n represents User i's preference across all books.
     - Each column vector v_j in R^m represents Book j's ratings across all users.
     """
@@ -18,14 +18,15 @@ class BookRecommenderEngine:
         self.users = list(self.df.index)
         self.books = list(self.df.columns)
         
-        # Convert DataFrame to a 2D NumPy array: Matrix R in R^(m x n)
+        # Convert DataFrame to a 2D NumPy array which would be our Matrix R in R^(m x n)
         self.R = self.df.to_numpy(dtype=float)
         self.num_users, self.num_books = self.R.shape
 
     def get_user_vector(self, user_name: str) -> np.ndarray:
         """
-        Extracts row vector u_i in R^n for a given user.
+        Extracts row vector u_i in R^n for the target user.
         """
+        #Handling the scenario where the user isn't actually in the matrix
         if user_name not in self.users:
             raise ValueError(f"User '{user_name}' not found in the dataset matrix.")
         idx = self.users.index(user_name)
