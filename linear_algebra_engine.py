@@ -5,117 +5,217 @@ import numpy as np
 class BookRecommenderEngine:
     """
     Linear Algebra Engine for User-Item Matrix Recommendation.
-    
+
     Mathematical Model:
-    - Matrix R in R^(m x n) where m = number of users, n = number of books.
-    - Each row vector u_i in R^n represents User i's preference across all books.
-    - Each column vector v_j in R^m represents Book j's ratings across all users.
+    - Matrix R in R^(m x n), where m = number of users
+      and n = number of books.
+    - Each row vector u_i in R^n represents a user's
+      preference across all books.
+    - Each column vector v_j in R^m represents a book's
+      ratings across all users.
     """
 
     def __init__(self, csv_path: str):
         # Read user-item matrix from CSV
         self.df = pd.read_csv(csv_path, index_col=0)
+
         self.users = list(self.df.index)
         self.books = list(self.df.columns)
-        
-        # Convert DataFrame to a 2D NumPy array which would be our Matrix R in R^(m x n)
+
+        # Convert DataFrame to NumPy matrix R
         self.R = self.df.to_numpy(dtype=float)
+
         self.num_users, self.num_books = self.R.shape
 
     def get_user_vector(self, user_name: str) -> np.ndarray:
         """
-        Extracts row vector u_i in R^n for the target user.
+        Extract the row vector u_i for the target user.
         """
-        #Handling the scenario where the user isn't actually in the matrix
+
         if user_name not in self.users:
-            raise ValueError(f"User '{user_name}' not found in the dataset matrix.")
+            raise ValueError(
+                f"User '{user_name}' not found in the dataset matrix."
+            )
+
         idx = self.users.index(user_name)
+
         return self.R[idx, :]
 
-    def compute_euclidean_distance(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
+    def compute_euclidean_distance(
+        self,
+        vec1: np.ndarray,
+        vec2: np.ndarray
+    ) -> float:
         """
-        Linear Algebra Concept: L2 Norm of Difference Vector.
-        
-        Formula:
-            d(u, v) = ||u - v||_2 = sqrt( sum_{k=1}^n (u_k - v_k)^2 )
-            
-        Equivalently via inner product:
-            d(u, v) = sqrt( (u - v) . (u - v) )
-        """
-        diff = vec1 - vec2
-        # np.dot(diff, diff) computes the inner product of the difference vector with itself
-        return float(np.sqrt(np.dot(diff, diff)))
+        Computes Euclidean distance between two user vectors.
 
-    def compute_cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
+        d(u, v) = ||u - v||_2
         """
-        Linear Algebra Concept: Normalized Inner Product (Cosine of Angle Theta).
-        
-        Formula:
-            cos(theta) = (u . v) / (||u||_2 * ||v||_2)
-            
-        Measures orientation alignment independent of vector magnitude.
+
+        diff = vec1 - vec2
+
+        return float(
+            np.sqrt(np.dot(diff, diff))
+        )
+
+    def compute_cosine_similarity(
+        self,
+        vec1: np.ndarray,
+        vec2: np.ndarray
+    ) -> float:
         """
+        Computes cosine similarity between two user vectors.
+
+        cos(theta) =
+        (u . v) / (||u||_2 * ||v||_2)
+        """
+
         dot_product = np.dot(vec1, vec2)
-        norm_u = np.linalg.norm(vec1)  # L2 norm of vec1
-        norm_v = np.linalg.norm(vec2)  # L2 norm of vec2
+
+        norm_u = np.linalg.norm(vec1)
+        norm_v = np.linalg.norm(vec2)
 
         if norm_u == 0 or norm_v == 0:
-            return 0.0  # Handle zero vectors to prevent division by zero
+            return 0.0
 
-        return float(dot_product / (norm_u * norm_v))
+        return float(
+            dot_product / (norm_u * norm_v)
+        )
 
-    def find_most_similar_user(self, target_user: str, metric: str = 'euclidean'):
+    def find_most_similar_user(
+        self,
+        target_user: str,
+        metric: str = "euclidean"
+    ):
         """
-        Searches the matrix for the nearest neighbor vector v_k to target vector u.
-        
-         If metric == 'euclidean': Minimizes L2 distance ||u - v||_2
-         If metric == 'cosine': Maximizes cos(theta) = (u . v) / (||u|| * ||v||)
+        Finds the user whose preference vector is most
+        similar to the target user's vector.
+
+        Euclidean:
+            Smaller distance = more similar
+
+        Cosine:
+            Larger similarity = more similar
         """
+
         target_vec = self.get_user_vector(target_user)
 
-        best_score = float('inf') if metric == 'euclidean' else -1.0
+        if metric == "euclidean":
+            best_score = float("inf")
+        elif metric == "cosine":
+            best_score = -1.0
+        else:
+            raise ValueError(
+                "Unknown metric. Use 'euclidean' or 'cosine'."
+            )
+
         most_similar_user = None
 
         for i, user in enumerate(self.users):
+
+            # Do not compare the user with themselves
             if user == target_user:
-                continue  # Skip self-comparison
+                continue
 
             current_vec = self.R[i, :]
 
-            if metric == 'euclidean':
-                score = self.compute_euclidean_distance(target_vec, current_vec)
+            if metric == "euclidean":
+
+                score = self.compute_euclidean_distance(
+                    target_vec,
+                    current_vec
+                )
+
                 if score < best_score:
                     best_score = score
                     most_similar_user = user
-            elif metric == 'cosine':
-                score = self.compute_cosine_similarity(target_vec, current_vec)
+
+            else:
+
+                score = self.compute_cosine_similarity(
+                    target_vec,
+                    current_vec
+                )
+
                 if score > best_score:
                     best_score = score
                     most_similar_user = user
-            else:
-                raise ValueError(f"Unknown metric '{metric}'. Use 'euclidean' or 'cosine'.")
 
         return most_similar_user, round(best_score, 4)
 
-    def generate_recommendations(self, target_user: str, metric: str = 'euclidean', threshold: float = 3.5):
+    def generate_recommendations(
+        self,
+        target_user: str,
+        metric: str = "euclidean",
+        threshold: float = 3.5
+    ):
         """
-        Generates recommendations by comparing the target user's vector u
-        with their nearest neighbor vector v in the matrix space R^n.
-        """
-        similar_user, distance_score = self.find_most_similar_user(target_user, metric=metric)
+        Generates book recommendations by comparing the
+        target user's ratings with their most similar user.
 
+        A book is recommended when:
+
+        1. The similar user rated the book highly
+           (>= threshold).
+
+        2. The similar user rated the book higher than
+           the target user.
+
+        Recommendations are ranked by rating difference.
+        """
+
+        # Find the most similar user
+        similar_user, distance_score = (
+            self.find_most_similar_user(
+                target_user,
+                metric=metric
+            )
+        )
+
+        # Get both user vectors
         target_vec = self.get_user_vector(target_user)
         similar_vec = self.get_user_vector(similar_user)
 
         recommendations = []
+
+        # Compare every book
         for j in range(self.num_books):
-            # Target rated low/unseen (< threshold) BUT similar user rated high (>= threshold)
-            if target_vec[j] < threshold and similar_vec[j] >= threshold:
+
+            target_rating = target_vec[j]
+            similar_rating = similar_vec[j]
+
+            # Recommend when the similar user:
+            # 1. rated the book highly
+            # 2. rated it higher than the target user
+            if (
+                similar_rating >= threshold
+                and similar_rating > target_rating
+            ):
+
                 recommendations.append({
                     "book": self.books[j],
-                    "similar_user_rating": float(similar_vec[j]),
-                    "target_user_rating": float(target_vec[j])
+                    "similar_user_rating": float(
+                        similar_rating
+                    ),
+                    "target_user_rating": float(
+                        target_rating
+                    ),
+                    "rating_difference": round(
+                        float(
+                            similar_rating - target_rating
+                        ),
+                        2
+                    )
                 })
+
+        # Strongest recommendations first
+        recommendations.sort(
+            key=lambda item: item["rating_difference"],
+            reverse=True
+        )
+
+        # Return a maximum of five recommendations
+        recommendations = recommendations[:5]
 
         return {
             "target_user": target_user,
@@ -127,32 +227,87 @@ class BookRecommenderEngine:
 
     def compute_item_averages(self) -> dict:
         """
-        Linear Algebra Concept: Column Mean Transformation.
-        
-        Computes mean vector m in R^n across all user rows (axis 0 of Matrix R).
-        Returns a dictionary mapping each book column to its mean rating.
+        Computes the average rating of every book.
+
+        This represents the column mean vector of matrix R.
         """
-        # Linear algebra column mean: (1/m) * sum_{i=1}^m R_{i, j}
-        column_means = np.mean(self.R, axis=0)
-        return dict(zip(self.books, np.round(column_means, 2)))
+
+        column_means = np.mean(
+            self.R,
+            axis=0
+        )
+
+        return dict(
+            zip(
+                self.books,
+                np.round(column_means, 2)
+            )
+        )
 
 
-# Terminal Verification Block
+# =========================================================
+# TERMINAL VERIFICATION
+# =========================================================
+
 if __name__ == "__main__":
-    try:
-        engine = BookRecommenderEngine("data/book_ratings.csv")
-        print(f"Matrix Loaded Successfully! Dimensions: {engine.R.shape} (m x n)")
-        
-        sample_user = engine.users[0]
-        print(f"\nTesting recommendations for vector: {sample_user}")
-        
-        euc_result = engine.generate_recommendations(sample_user, metric='euclidean')
-        print("Euclidean Distance Result:", euc_result)
-        
-        cos_result = engine.generate_recommendations(sample_user, metric='cosine')
-        print("Cosine Similarity Result:", cos_result)
 
+    try:
+
+        engine = BookRecommenderEngine(
+            "data/book_ratings.csv"
+        )
+
+        print(
+            "Matrix Loaded Successfully! "
+            f"Dimensions: {engine.R.shape} (m x n)"
+        )
+
+        sample_user = engine.users[0]
+
+        print(
+            f"\nTesting recommendations for: "
+            f"{sample_user}"
+        )
+
+        # Euclidean test
+        euc_result = engine.generate_recommendations(
+            sample_user,
+            metric="euclidean"
+        )
+
+        print(
+            "\nEuclidean Distance Result:"
+        )
+
+        print(euc_result)
+
+        # Cosine test
+        cos_result = engine.generate_recommendations(
+            sample_user,
+            metric="cosine"
+        )
+
+        print(
+            "\nCosine Similarity Result:"
+        )
+
+        print(cos_result)
+
+        # Average ratings test
         averages = engine.compute_item_averages()
-        print("\nColumn Mean Vector (Item Averages):", list(averages.items())[:3])
+
+        print(
+            "\nColumn Mean Vector "
+            "(first 3 books):"
+        )
+
+        print(
+            list(averages.items())[:3]
+        )
+
     except FileNotFoundError:
-        print("Run 'python preprocess.py' first to generate 'data/book_ratings.csv'.")
+
+        print(
+            "Run 'python preprocess.py' first "
+            "to generate 'data/book_ratings.csv'."
+        )
